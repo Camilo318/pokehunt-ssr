@@ -43,30 +43,33 @@ const Home = ({
         <link rel='icon' href='/favicon.ico' />
       </Head>
 
-      <main className='flex w-full flex-1 flex-col items-center justify-center px-20 text-center'>
-        <h1 className='text-6xl font-bold'>
+      <main className='flex w-full flex-1 flex-col items-center justify-center px-5 sm:px-7 xl:px-20 text-center'>
+        <h1 className='mt-6 text-2xl md:text-6xl font-bold'>
           Welcome to<> </>
           <span className='inline-block text-blue-600'>
             PokeHunt!
           </span>
         </h1>
 
-        <p className='mt-3 text-2xl'>Gotta catch 'em all</p>
+        <p className='mt-4 text-lg md:text-2xl'>
+          Gotta catch 'em all
+        </p>
 
         <div className='my-6 flex max-w-5xl flex-wrap gap-6 items-center justify-center sm:w-full'>
           {data?.pokemon.map(({ id, name, image }) => (
             <a
               key={id}
               href='https://nextjs.org/docs'
-              className='w-96 rounded-xl border p-6 text-left'>
+              className='flex-1 max-w-sm basis-60 shrink-0 rounded-xl border p-6 text-left'>
               <h3 className='mb-3 text-2xl text-slate-900 font-bold hover:text-blue-600 focus:text-blue-600'>
                 {name} &rarr;
               </h3>
+
               <Image
                 src={`${pokemonEndPoint}/assets/${image?.id}?access_token=${pokemonToken}`}
-                width={800}
-                height={800}
-                layout='responsive'
+                layout='intrinsic'
+                width={400}
+                height={300}
               />
             </a>
           ))}
