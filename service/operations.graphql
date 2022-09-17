@@ -1,30 +1,12 @@
-query getPokemons {
-  pokemons: pokemon_v2_pokemonspecies(
-    where: {
-      pokemon_v2_generation: { name: { _eq: "generation-i" } }
-    }
-    order_by: { id: asc }
-    limit: 6
-    offset: 0
-  ) {
-    name
+query getPokemons($limit: Int) {
+  pokemon(limit: $limit) {
     id
-    pokemon_v2_evolutionchain {
-      pokemon_v2_pokemonspecies {
-        id
-        name
-      }
-    }
-    pokemon_v2_generation {
-      name
-    }
-  }
-  generations: pokemon_v2_generation {
     name
-    pokemon_species: pokemon_v2_pokemonspecies_aggregate {
-      aggregate {
-        count
-      }
+    hp
+    attack
+    defense
+    image {
+      id
     }
   }
 }

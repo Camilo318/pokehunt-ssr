@@ -1,5 +1,5 @@
 overwrite: true
-schema: 'https://beta.pokeapi.co/graphql/v1beta'
+schema: '${NEXT_PUBLIC_DIRECTUS_URL}/graphql'
 documents: 'service/operations.graphql'
 generates:
   service/graphql.ts:
