@@ -5,9 +5,11 @@ import Image from 'next/image'
 import { useQuery } from 'react-query'
 import {
   GetPokemonsQuery,
-  GetPokemonsDocument
+  GetPokemonsDocument,
+  Pokemon
 } from '../service/graphql'
 import { request } from 'graphql-request'
+import PokemonCard from '../components/PokemonCard'
 
 const pokemonEndPoint = `${process.env.NEXT_PUBLIC_DIRECTUS_URL}`
 const pokemonToken = `${process.env.NEXT_PUBLIC_DIRECTUS_TOKEN}`
@@ -40,10 +42,10 @@ const Home = ({
     <div className='flex min-h-screen flex-col items-center justify-center py-2'>
       <Head>
         <title>PokeHunt</title>
-        <link rel='icon' href='/favicon.ico' />
+        <link rel='icon' href='/pikachu.png' />
       </Head>
 
-      <main className='flex w-full flex-1 flex-col items-center justify-center px-5 sm:px-7 xl:px-20 text-center'>
+      <main className='flex w-full flex-1 flex-col items-center justify-center px-5 sm:px-10 xl:px-20 text-center'>
         <h1 className='mt-6 text-2xl md:text-6xl font-bold'>
           Welcome to<> </>
           <span className='inline-block text-blue-600'>
@@ -56,22 +58,13 @@ const Home = ({
         </p>
 
         <div className='my-6 flex max-w-5xl flex-wrap gap-6 items-center justify-center sm:w-full'>
-          {data?.pokemon.map(({ id, name, image }) => (
-            <a
-              key={id}
-              href='https://nextjs.org/docs'
-              className='flex-1 max-w-sm basis-60 shrink-0 rounded-xl border p-6 text-left'>
-              <h3 className='mb-3 text-2xl text-slate-900 font-bold hover:text-blue-600 focus:text-blue-600'>
-                {name} &rarr;
-              </h3>
-
-              <Image
-                src={`${pokemonEndPoint}/assets/${image?.id}?access_token=${pokemonToken}`}
-                layout='intrinsic'
-                width={400}
-                height={300}
-              />
-            </a>
+          {data?.pokemon.map(poke => (
+            <PokemonCard
+              key={poke.id}
+              pokemon={poke as Pokemon}
+              endpoint={pokemonEndPoint}
+              token={pokemonToken}
+            />
           ))}
         </div>
       </main>
