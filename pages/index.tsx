@@ -10,6 +10,7 @@ import {
 } from '../service/graphql'
 import { request } from 'graphql-request'
 import PokemonCard from '../components/PokemonCard'
+import { useState } from 'react'
 
 const pokemonEndPoint = `${process.env.NEXT_PUBLIC_DIRECTUS_URL}`
 const pokemonToken = `${process.env.NEXT_PUBLIC_DIRECTUS_TOKEN}`
@@ -17,14 +18,21 @@ const pokemonToken = `${process.env.NEXT_PUBLIC_DIRECTUS_TOKEN}`
 const Home = ({
   pokefallback
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const { data } = useQuery(
-    'pokemons',
+  const [pageIndex, setPageIndex] = useState<number>(1)
+  const totalPokemons = pokefallback.pokemon_aggregated[0].count?.id
+  const pageSize = 20
+  const pageCount =
+    totalPokemons && Math.ceil(totalPokemons / pageSize)
+
+  const { data, isFetching, isPreviousData } = useQuery(
+    ['pokemons', pageIndex],
     async () => {
       const pokeInfo = await request<GetPokemonsQuery>(
         `${pokemonEndPoint}/graphql`,
         GetPokemonsDocument,
         {
-          limit: 20
+          limit: pageSize,
+          page: pageIndex
         },
         {
           authorization: `Bearer ${pokemonToken}`
@@ -34,7 +42,9 @@ const Home = ({
       return pokeInfo
     },
     {
-      initialData: pokefallback
+      initialData: pokefallback,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false
     }
   )
 
@@ -67,6 +77,32 @@ const Home = ({
             />
           ))}
         </div>
+
+        <div className='my-8 flex flex-col gap-2'>
+          <span>{`${pageIndex} of ${pageCount}`}</span>
+          <div className='flex gap-2'>
+            <button
+              className={`md:p-2 rounded py-2 text-gray-800 p-2 ${
+                pageIndex === 1 ? 'bg-gray-300' : 'bg-blue-400'
+              }`}
+              disabled={pageIndex === 1}
+              onClick={() => setPageIndex(page => page - 1)}>
+              Previous
+            </button>
+            <button
+              className={`md:p-2 rounded py-2 text-gray-800 p-2 ${
+                pageIndex === pageCount || isPreviousData
+                  ? 'bg-gray-300'
+                  : 'bg-blue-400'
+              }`}
+              disabled={pageIndex === pageCount || isPreviousData}
+              onClick={() => setPageIndex(page => page + 1)}>
+              Next
+            </button>
+          </div>
+
+          {isFetching ? <span> Loading...</span> : null}
+        </div>
       </main>
 
       <footer className='flex h-24 w-full items-center justify-center border-t'>
@@ -93,7 +129,8 @@ export async function getStaticProps() {
     `${pokemonEndPoint}/graphql`,
     GetPokemonsDocument,
     {
-      limit: 20
+      limit: 20,
+      page: 1
     },
     {
       authorization: `Bearer ${pokemonToken}`

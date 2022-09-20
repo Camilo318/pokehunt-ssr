@@ -1,11 +1,16 @@
-query getPokemons($limit: Int) {
-  pokemon(limit: $limit) {
+query getPokemons($limit: Int, $page: Int) {
+  pokemon(limit: $limit, page: $page) {
     id
     name
     hp
     attack
     defense
     image {
+      id
+    }
+  }
+  pokemon_aggregated {
+    count {
       id
     }
   }
