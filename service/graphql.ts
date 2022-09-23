@@ -106,12 +106,12 @@ export type Directus_Files = {
   filesize?: Maybe<Scalars['String']>;
   folder?: Maybe<Scalars['String']>;
   height?: Maybe<Scalars['Int']>;
-  id?: Maybe<Scalars['ID']>;
+  id: Scalars['ID'];
   location?: Maybe<Scalars['String']>;
   metadata?: Maybe<Scalars['JSON']>;
   metadata_func?: Maybe<Count_Functions>;
   modified_by?: Maybe<Scalars['String']>;
-  modified_on: Scalars['Date'];
+  modified_on?: Maybe<Scalars['Date']>;
   modified_on_func?: Maybe<Datetime_Functions>;
   storage: Scalars['String'];
   tags?: Maybe<Scalars['JSON']>;
@@ -119,7 +119,7 @@ export type Directus_Files = {
   title?: Maybe<Scalars['String']>;
   type?: Maybe<Scalars['String']>;
   uploaded_by?: Maybe<Scalars['String']>;
-  uploaded_on: Scalars['Date'];
+  uploaded_on?: Maybe<Scalars['Date']>;
   uploaded_on_func?: Maybe<Datetime_Functions>;
   width?: Maybe<Scalars['Int']>;
 };
@@ -174,7 +174,7 @@ export type Pokemon = {
   attack?: Maybe<Scalars['Int']>;
   defense?: Maybe<Scalars['Int']>;
   hp?: Maybe<Scalars['Int']>;
-  id?: Maybe<Scalars['ID']>;
+  id: Scalars['ID'];
   image?: Maybe<Directus_Files>;
   name?: Maybe<Scalars['String']>;
   special_attack?: Maybe<Scalars['Int']>;
@@ -266,13 +266,23 @@ export type String_Filter_Operators = {
   _starts_with?: InputMaybe<Scalars['String']>;
 };
 
+export type PokemonFieldsFragment = { __typename?: 'pokemon', id: string, name?: string | null, hp?: number | null, attack?: number | null, defense?: number | null, image?: { __typename?: 'directus_files', id: string } | null };
+
 export type GetPokemonsQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']>;
   page?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type GetPokemonsQuery = { __typename?: 'Query', pokemon: Array<{ __typename?: 'pokemon', id?: string | null, name?: string | null, hp?: number | null, attack?: number | null, defense?: number | null, image?: { __typename?: 'directus_files', id?: string | null } | null }>, pokemon_aggregated: Array<{ __typename?: 'pokemon_aggregated', count?: { __typename?: 'pokemon_aggregated_count', id?: number | null } | null }> };
+export type GetPokemonsQuery = { __typename?: 'Query', pokemon: Array<{ __typename?: 'pokemon', id: string, name?: string | null, hp?: number | null, attack?: number | null, defense?: number | null, image?: { __typename?: 'directus_files', id: string } | null }>, pokemon_aggregated: Array<{ __typename?: 'pokemon_aggregated', count?: { __typename?: 'pokemon_aggregated_count', id?: number | null } | null }> };
+
+export type GetPokemonByIdQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
 
 
-export const GetPokemonsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getPokemons"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pokemon"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"hp"}},{"kind":"Field","name":{"kind":"Name","value":"attack"}},{"kind":"Field","name":{"kind":"Name","value":"defense"}},{"kind":"Field","name":{"kind":"Name","value":"image"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pokemon_aggregated"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<GetPokemonsQuery, GetPokemonsQueryVariables>;
+export type GetPokemonByIdQuery = { __typename?: 'Query', pokemon_by_id?: { __typename?: 'pokemon', id: string, name?: string | null, hp?: number | null, attack?: number | null, defense?: number | null, image?: { __typename?: 'directus_files', id: string } | null } | null };
+
+export const PokemonFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"pokemonFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"pokemon"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"hp"}},{"kind":"Field","name":{"kind":"Name","value":"attack"}},{"kind":"Field","name":{"kind":"Name","value":"defense"}},{"kind":"Field","name":{"kind":"Name","value":"image"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<PokemonFieldsFragment, unknown>;
+export const GetPokemonsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getPokemons"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"page"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pokemon"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"page"},"value":{"kind":"Variable","name":{"kind":"Name","value":"page"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"pokemonFields"}}]}},{"kind":"Field","name":{"kind":"Name","value":"pokemon_aggregated"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}},...PokemonFieldsFragmentDoc.definitions]} as unknown as DocumentNode<GetPokemonsQuery, GetPokemonsQueryVariables>;
+export const GetPokemonByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getPokemonById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pokemon_by_id"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"pokemonFields"}}]}}]}},...PokemonFieldsFragmentDoc.definitions]} as unknown as DocumentNode<GetPokemonByIdQuery, GetPokemonByIdQueryVariables>;

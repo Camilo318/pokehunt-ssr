@@ -1,17 +1,27 @@
+fragment pokemonFields on pokemon {
+  id
+  name
+  hp
+  attack
+  defense
+  image {
+    id
+  }
+}
+
 query getPokemons($limit: Int, $page: Int) {
   pokemon(limit: $limit, page: $page) {
-    id
-    name
-    hp
-    attack
-    defense
-    image {
-      id
-    }
+    ...pokemonFields
   }
   pokemon_aggregated {
     count {
       id
     }
+  }
+}
+
+query getPokemonById($id: ID!) {
+  pokemon_by_id(id: $id) {
+    ...pokemonFields
   }
 }

@@ -1,6 +1,5 @@
 import type { InferGetStaticPropsType, NextPage } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
 
 import { useQuery } from 'react-query'
 import {
@@ -10,6 +9,7 @@ import {
 } from '../service/graphql'
 import { request } from 'graphql-request'
 import PokemonCard from '../components/PokemonCard'
+import SearchBox from '../components/SearchBox'
 import { useState } from 'react'
 
 const pokemonEndPoint = `${process.env.NEXT_PUBLIC_DIRECTUS_URL}`
@@ -48,6 +48,11 @@ const Home = ({
     }
   )
 
+  const pagesArray = Array.from(
+    { length: pageCount as number },
+    (_, index) => index + 1
+  )
+
   return (
     <div className='flex min-h-screen flex-col items-center justify-center py-2'>
       <Head>
@@ -63,9 +68,20 @@ const Home = ({
           </span>
         </h1>
 
-        <p className='mt-4 text-lg md:text-2xl'>
+        <p className='my-4 text-lg md:text-2xl'>
           Gotta catch 'em all
         </p>
+
+        <SearchBox
+          name='q'
+          handleSearch={e => {
+            e.preventDefault()
+            const target = e.target as typeof e.target & {
+              q: { value: string }
+            }
+            target.q.value
+          }}
+        />
 
         <div className='my-6 flex max-w-5xl flex-wrap gap-6 items-center justify-center sm:w-full'>
           {data?.pokemon.map(poke => (
@@ -78,17 +94,30 @@ const Home = ({
           ))}
         </div>
 
-        <div className='my-8 flex flex-col gap-2'>
+        <div className='pt-2 flex flex-col gap-2 bg-white shadow-inner fixed bottom-0 left-0 right-0'>
           <span>{`${pageIndex} of ${pageCount}`}</span>
-          <div className='flex gap-2'>
+          <div className='pb-8 px-4 flex justify-center gap-2 min-w-0 overflow-x-scroll'>
             <button
               className={`md:p-2 rounded py-2 text-gray-800 p-2 ${
-                pageIndex === 1 ? 'bg-gray-300' : 'bg-blue-400'
+                pageIndex === 1 || isPreviousData
+                  ? 'bg-gray-300'
+                  : 'bg-blue-400'
               }`}
-              disabled={pageIndex === 1}
+              disabled={pageIndex === 1 || isPreviousData}
               onClick={() => setPageIndex(page => page - 1)}>
               Previous
             </button>
+            {pagesArray.map(page => (
+              <button
+                key={page}
+                className={`md:p-2 rounded py-2 text-gray-800 p-2 ${
+                  page === pageIndex ? 'bg-blue-300' : 'bg-blue-200'
+                }`}
+                disabled={isPreviousData}
+                onClick={() => setPageIndex(page)}>
+                {page}
+              </button>
+            ))}
             <button
               className={`md:p-2 rounded py-2 text-gray-800 p-2 ${
                 pageIndex === pageCount || isPreviousData
@@ -101,25 +130,14 @@ const Home = ({
             </button>
           </div>
 
-          {isFetching ? <span> Loading...</span> : null}
+          {isFetching ? (
+            <span className='absolute bottom-1 left-[50%] translate-x-[-50%]'>
+              {' '}
+              Loading...
+            </span>
+          ) : null}
         </div>
       </main>
-
-      <footer className='flex h-24 w-full items-center justify-center border-t'>
-        <a
-          className='flex items-center gap-2'
-          href='https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app'
-          target='_blank'
-          rel='noopener noreferrer'>
-          Powered by<> </>
-          <Image
-            src='/vercel.svg'
-            alt='Vercel Logo'
-            width={72}
-            height={16}
-          />
-        </a>
-      </footer>
     </div>
   )
 }
