@@ -1,12 +1,25 @@
+import { useRef } from 'react'
+
 function SearchBox({
   name,
+  placeholder = 'Search',
   handleSearch
 }: {
   name: string
-  handleSearch: (e: React.FormEvent<HTMLFormElement>) => void
+  placeholder?: string
+  handleSearch: (
+    event: React.FormEvent<HTMLFormElement>,
+    query?: string
+  ) => void
 }) {
+  const inputRef = useRef<HTMLInputElement>(null)
+
   return (
-    <form className='flex items-center' onSubmit={handleSearch}>
+    <form
+      className='flex items-center'
+      onSubmit={event =>
+        handleSearch(event, inputRef.current?.value)
+      }>
       <label htmlFor='simple-search' className='sr-only'>
         Search
       </label>
@@ -28,8 +41,9 @@ function SearchBox({
           type='text'
           id='simple-search'
           className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-          placeholder='Search'
+          placeholder={placeholder}
           name={name}
+          ref={inputRef}
         />
       </div>
       <button
