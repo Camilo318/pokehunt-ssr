@@ -1,28 +1,26 @@
-import type { InferGetStaticPropsType, NextPage } from 'next'
+import type { InferGetServerSidePropsType } from 'next'
 import Head from 'next/head'
-
+import { useState } from 'react'
 import { useQuery } from 'react-query'
 import {
   GetPokemonsQuery,
-  GetPokemonsDocument,
-  Pokemon
+  GetPokemonsDocument
 } from '../service/graphql'
 import { request } from 'graphql-request'
 import PokemonCard from '../components/PokemonCard'
 import SearchBox from '../components/SearchBox'
-import { useState } from 'react'
 import Pagination from '../components/Pagination'
 
 const pokemonEndPoint = `${process.env.NEXT_PUBLIC_DIRECTUS_URL}`
 const pokemonToken = `${process.env.NEXT_PUBLIC_DIRECTUS_TOKEN}`
 
 const Home = ({
-  pokefallback
-}: InferGetStaticPropsType<typeof getStaticProps>) => {
+  pokeFallback
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [pageIndex, setPageIndex] = useState<number>(1)
   const [pageSize] = useState<number>(24)
   const totalPokemons =
-    pokefallback.pokemon_aggregated[0].count?.id ?? 0
+    pokeFallback.pokemon_aggregated[0].count?.id ?? 0
 
   const { data, isPreviousData } = useQuery(
     ['pokemons', pageIndex],
@@ -41,7 +39,7 @@ const Home = ({
       return pokeInfo
     },
     {
-      initialData: pokefallback,
+      initialData: pokeFallback,
       keepPreviousData: true,
       refetchOnWindowFocus: false
     }
@@ -68,12 +66,8 @@ const Home = ({
 
         <SearchBox
           name='q'
-          handleSearch={e => {
-            e.preventDefault()
-            const target = e.target as typeof e.target & {
-              q: { value: string }
-            }
-            target.q.value
+          handleSearch={(e, query) => {
+            console.log(query)
           }}
         />
 
@@ -101,12 +95,12 @@ const Home = ({
   )
 }
 
-export async function getStaticProps() {
-  const pokeInfo = await request<GetPokemonsQuery>(
+export async function getServerSideProps() {
+  const pokeData = await request<GetPokemonsQuery>(
     `${pokemonEndPoint}/graphql`,
     GetPokemonsDocument,
     {
-      limit: 20,
+      limit: 24,
       page: 1
     },
     {
@@ -116,7 +110,7 @@ export async function getStaticProps() {
 
   return {
     props: {
-      pokefallback: pokeInfo // fallback data
+      pokeFallback: pokeData // fallback data
     }
   }
 }
