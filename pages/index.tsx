@@ -81,9 +81,9 @@ const Home = ({
           {data?.pokemon.map(poke => (
             <PokemonCard
               key={poke.id}
-              pokemon={poke as Pokemon}
-              endpoint={pokemonEndPoint}
-              token={pokemonToken}
+              id={poke.id}
+              name={poke.name}
+              imageSrc={`${pokemonEndPoint}/assets/${poke.image?.id}?access_token=${pokemonToken}`}
             />
           ))}
         </div>

@@ -25,3 +25,18 @@ query getPokemonById($id: ID!) {
     ...pokemonFields
   }
 }
+
+query searchPokemons($name: String, $limit: Int, $page: Int) {
+  pokemon(
+    filter: { name: { _contains: $name } }
+    page: $page
+    limit: $limit
+  ) {
+    ...pokemonFields
+  }
+  pokemon_aggregated(filter: { name: { _contains: $name } }) {
+    count {
+      id
+    }
+  }
+}
