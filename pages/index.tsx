@@ -4,7 +4,9 @@ import { useState } from 'react'
 import { useQuery } from 'react-query'
 import {
   GetPokemonsQuery,
-  GetPokemonsDocument
+  GetPokemonsDocument,
+  SearchPokemonsQuery,
+  SearchPokemonsDocument
 } from '../service/graphql'
 import { request } from 'graphql-request'
 import PokemonCard from '../components/PokemonCard'
@@ -45,6 +47,28 @@ const Home = ({
     }
   )
 
+  const [querySearch, setQuerySearch] = useState<string>()
+
+  const { data: responseData } = useQuery(
+    ['searchResult', querySearch],
+    async () => {
+      const response = await request<SearchPokemonsQuery>(
+        `${pokemonEndPoint}/graphql`,
+        SearchPokemonsDocument,
+        { name: querySearch },
+        {
+          authorization: `Bearer ${pokemonToken}`
+        }
+      )
+
+      return response
+    },
+    {
+      enabled: !!querySearch,
+      refetchOnWindowFocus: false
+    }
+  )
+
   return (
     <div className='flex min-h-screen flex-col items-center justify-center py-2'>
       <Head>
@@ -64,12 +88,28 @@ const Home = ({
           Gotta catch 'em all
         </p>
 
-        <SearchBox
-          name='q'
-          handleSearch={(e, query) => {
-            console.log(query)
-          }}
-        />
+        <div className='relative'>
+          <SearchBox
+            name='q'
+            handleSearch={(event, query) => {
+              event.preventDefault()
+              setQuerySearch(query)
+            }}
+          />
+          {responseData && (
+            <div className='mt-1 absolute inset-x-0 z-10'>
+              <ul className='w-full max-h-64 overflow-y-auto text-sm font-normal text-gray-500 bg-white rounded-md border border-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:text-white'>
+                {responseData.pokemon.map(hit => (
+                  <li
+                    className='py-2 px-4 w-full rounded-t-lg border-b border-gray-200 dark:border-gray-600 last:border-b-0 hover:bg-gray-100 hover:text-gray-700'
+                    key={hit.id}>
+                    {hit.name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
 
         <div className='my-6 pb-24 flex max-w-5xl flex-wrap gap-6 items-center justify-center sm:w-full'>
           {data?.pokemon.map(poke => (

@@ -3,7 +3,8 @@ import { useRef } from 'react'
 function SearchBox({
   name,
   placeholder = 'Search',
-  handleSearch
+  handleSearch,
+  ...props
 }: {
   name: string
   placeholder?: string
@@ -11,6 +12,7 @@ function SearchBox({
     event: React.FormEvent<HTMLFormElement>,
     query?: string
   ) => void
+  props?: Record<string, string | undefined>
 }) {
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -18,7 +20,7 @@ function SearchBox({
     <form
       className='flex items-center'
       onSubmit={event =>
-        handleSearch(event, inputRef.current?.value)
+        handleSearch(event, inputRef.current?.value.trim())
       }>
       <label htmlFor='simple-search' className='sr-only'>
         Search
@@ -44,6 +46,7 @@ function SearchBox({
           placeholder={placeholder}
           name={name}
           ref={inputRef}
+          {...props}
         />
       </div>
       <button
