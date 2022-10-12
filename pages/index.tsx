@@ -12,8 +12,10 @@ import { request } from 'graphql-request'
 import PokemonCard from '../components/PokemonCard'
 import SearchBox from '../components/SearchBox'
 import Pagination from '../components/Pagination'
+import ListResults from '../components/ListResults'
 
 import { useDebounce } from '../hooks/index'
+import Link from 'next/link'
 
 const pokemonEndPoint = `${process.env.NEXT_PUBLIC_DIRECTUS_URL}`
 const pokemonToken = `${process.env.NEXT_PUBLIC_DIRECTUS_TOKEN}`
@@ -105,23 +107,14 @@ const Home = ({
           />
           {searchResult && (
             <div className='mt-1 absolute inset-x-0 z-10'>
-              <ul className='w-full max-h-64 overflow-y-auto text-sm font-normal text-gray-500 bg-white rounded-md border border-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:text-white'>
-                {searchResult.pokemon.length > 0 ? (
-                  searchResult.pokemon.map(hit => (
-                    <li
-                      className='py-2 px-4 w-full rounded-t-lg border-b border-gray-200 dark:border-gray-600 last:border-b-0 hover:bg-gray-100 hover:text-gray-700'
-                      key={hit.id}>
-                      {hit.name}
-                    </li>
-                  ))
-                ) : (
-                  <li
-                    className='py-2 px-4 w-full rounded-t-lg border-b border-gray-200 dark:border-gray-600 last:border-b-0 hover:bg-gray-100 hover:text-gray-700'
-                    key='no-results'>
-                    No results found
-                  </li>
+              <ListResults
+                items={searchResult.pokemon}
+                renderItem={item => (
+                  <Link href={`/pokemon/${item.id}`}>
+                    <a className='py-2 px-4 block'>{item.name}</a>
+                  </Link>
                 )}
-              </ul>
+              />
             </div>
           )}
         </div>
