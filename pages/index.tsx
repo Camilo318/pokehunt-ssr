@@ -13,6 +13,8 @@ import PokemonCard from '../components/PokemonCard'
 import SearchBox from '../components/SearchBox'
 import Pagination from '../components/Pagination'
 
+import { useDebounce } from '../hooks/index'
+
 const pokemonEndPoint = `${process.env.NEXT_PUBLIC_DIRECTUS_URL}`
 const pokemonToken = `${process.env.NEXT_PUBLIC_DIRECTUS_TOKEN}`
 
@@ -47,15 +49,20 @@ const Home = ({
     }
   )
 
-  const [querySearch, setQuerySearch] = useState<string>()
+  const [searchQuery, setSearchQuery] = useState<string>()
 
-  const { data: responseData } = useQuery(
-    ['searchResult', querySearch],
+  const debouncedSearchQuery = useDebounce<typeof searchQuery>(
+    searchQuery,
+    600
+  )
+
+  const { data: searchResult } = useQuery(
+    ['searchResult', debouncedSearchQuery],
     async () => {
       const response = await request<SearchPokemonsQuery>(
         `${pokemonEndPoint}/graphql`,
         SearchPokemonsDocument,
-        { name: querySearch },
+        { name: debouncedSearchQuery },
         {
           authorization: `Bearer ${pokemonToken}`
         }
@@ -64,7 +71,7 @@ const Home = ({
       return response
     },
     {
-      enabled: !!querySearch,
+      enabled: !!debouncedSearchQuery,
       refetchOnWindowFocus: false
     }
   )
@@ -93,19 +100,27 @@ const Home = ({
             name='q'
             handleSearch={(event, query) => {
               event.preventDefault()
-              setQuerySearch(query)
             }}
+            onChange={setSearchQuery}
           />
-          {responseData && (
+          {searchResult && (
             <div className='mt-1 absolute inset-x-0 z-10'>
               <ul className='w-full max-h-64 overflow-y-auto text-sm font-normal text-gray-500 bg-white rounded-md border border-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:text-white'>
-                {responseData.pokemon.map(hit => (
+                {searchResult.pokemon.length > 0 ? (
+                  searchResult.pokemon.map(hit => (
+                    <li
+                      className='py-2 px-4 w-full rounded-t-lg border-b border-gray-200 dark:border-gray-600 last:border-b-0 hover:bg-gray-100 hover:text-gray-700'
+                      key={hit.id}>
+                      {hit.name}
+                    </li>
+                  ))
+                ) : (
                   <li
                     className='py-2 px-4 w-full rounded-t-lg border-b border-gray-200 dark:border-gray-600 last:border-b-0 hover:bg-gray-100 hover:text-gray-700'
-                    key={hit.id}>
-                    {hit.name}
+                    key='no-results'>
+                    No results found
                   </li>
-                ))}
+                )}
               </ul>
             </div>
           )}
