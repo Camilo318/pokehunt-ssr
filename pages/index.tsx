@@ -1,7 +1,10 @@
-import type { InferGetServerSidePropsType } from 'next'
-import Head from 'next/head'
 import { useState } from 'react'
 import { useQuery } from 'react-query'
+import type { InferGetServerSidePropsType } from 'next'
+import Head from 'next/head'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+
 import {
   GetPokemonsQuery,
   GetPokemonsDocument,
@@ -15,7 +18,6 @@ import Pagination from '../components/Pagination'
 import ListResults from '../components/ListResults'
 
 import { useDebounce } from '../hooks/index'
-import Link from 'next/link'
 
 const pokemonEndPoint = `${process.env.NEXT_PUBLIC_DIRECTUS_URL}`
 const pokemonToken = `${process.env.NEXT_PUBLIC_DIRECTUS_TOKEN}`
@@ -27,6 +29,8 @@ const Home = ({
   const [pageSize] = useState<number>(24)
   const totalPokemons =
     pokeFallback.pokemon_aggregated[0].count?.id ?? 0
+
+  const router = useRouter()
 
   const { data, isPreviousData } = useQuery(
     ['pokemons', pageIndex],
@@ -94,7 +98,7 @@ const Home = ({
         </h1>
 
         <p className='my-4 text-lg md:text-2xl'>
-          Gotta catch 'em all
+          Gotta catch &apos;em all
         </p>
 
         <div className='relative'>
@@ -102,6 +106,10 @@ const Home = ({
             name='q'
             handleSearch={(event, query) => {
               event.preventDefault()
+              router.push({
+                pathname: '/',
+                query: { q: query }
+              })
             }}
             onChange={setSearchQuery}
           />
