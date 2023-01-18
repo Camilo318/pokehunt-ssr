@@ -106,20 +106,6 @@ const Home = ({
               }}
               onChange={setSearchQuery}
             />
-          </div>
-
-          <div className='relative'>
-            <SearchBox
-              name='q'
-              handleSearch={(event, query) => {
-                event.preventDefault()
-                router.push({
-                  pathname: '/',
-                  query: { q: query }
-                })
-              }}
-              onChange={setSearchQuery}
-            />
             {searchResult && (
               <div className='mt-1 absolute inset-x-0 z-10'>
                 <ListResults
@@ -132,17 +118,6 @@ const Home = ({
                 />
               </div>
             )}
-          </div>
-
-          <div className='my-6 pb-24 flex max-w-5xl flex-wrap gap-6 items-center justify-center sm:w-full'>
-            {data?.pokemon.map(poke => (
-              <PokemonCard
-                key={poke.id}
-                id={poke.id}
-                name={poke.name}
-                imageSrc={`${pokemonEndPoint}/assets/${poke.image?.id}?access_token=${pokemonToken}`}
-              />
-            ))}
           </div>
 
           <div className='mt-6 mx-auto flex max-w-5xl flex-wrap gap-6 items-center justify-center'>
