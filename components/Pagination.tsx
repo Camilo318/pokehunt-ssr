@@ -56,7 +56,7 @@ const Pagination = ({
         entries
       </p>
       <nav aria-label='pagination'>
-        <ul className='px-5 flex items-center justify-start -space-x-px overflow-x-scroll w-full'>
+        <ul className='px-5 flex items-center justify-center -space-x-px overflow-x-auto w-full snap-x'>
           <li>
             <button
               onClick={() => handlePageChange(pageIndex - 1)}
@@ -134,7 +134,7 @@ const PageItem = ({
   const defaultPageStyles =
     'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
   return (
-    <li>
+    <li className='snap-center'>
       <button
         disabled={disabled}
         onClick={() => onPageChange(page)}
