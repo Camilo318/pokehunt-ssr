@@ -1,7 +1,10 @@
-import type { InferGetServerSidePropsType } from 'next'
-import Head from 'next/head'
 import { useState } from 'react'
 import { useQuery } from 'react-query'
+import type { InferGetServerSidePropsType } from 'next'
+import Head from 'next/head'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+
 import {
   GetPokemonsQuery,
   GetPokemonsDocument,
@@ -13,9 +16,9 @@ import PokemonCard from '../components/PokemonCard'
 import SearchBox from '../components/SearchBox'
 import Pagination from '../components/Pagination'
 import ListResults from '../components/ListResults'
+import Header from '../components/Header'
 
 import { useDebounce } from '../hooks/index'
-import Link from 'next/link'
 
 const pokemonEndPoint = `${process.env.NEXT_PUBLIC_DIRECTUS_URL}`
 const pokemonToken = `${process.env.NEXT_PUBLIC_DIRECTUS_TOKEN}`
@@ -27,6 +30,8 @@ const Home = ({
   const [pageSize] = useState<number>(24)
   const totalPokemons =
     pokeFallback.pokemon_aggregated[0].count?.id ?? 0
+
+  const router = useRouter()
 
   const { data, isPreviousData } = useQuery(
     ['pokemons', pageIndex],
@@ -79,67 +84,64 @@ const Home = ({
   )
 
   return (
-    <div className='flex min-h-screen flex-col items-center justify-center py-2'>
+    <>
       <Head>
         <title>PokeHunt</title>
         <link rel='icon' href='/pikachu.png' />
       </Head>
 
-      <main className='flex w-full flex-1 flex-col items-center justify-center px-5 sm:px-10 xl:px-20 text-center'>
-        <h1 className='mt-6 text-2xl md:text-6xl font-bold'>
-          Welcome to<> </>
-          <span className='inline-block text-blue-600'>
-            PokeHunt!
-          </span>
-        </h1>
+      <div className='flex w-full flex-col text-center h-screen'>
+        <Header />
 
-        <p className='my-4 text-lg md:text-2xl'>
-          Gotta catch 'em all
-        </p>
-
-        <div className='relative'>
-          <SearchBox
-            name='q'
-            handleSearch={(event, query) => {
-              event.preventDefault()
-            }}
-            onChange={setSearchQuery}
-          />
-          {searchResult && (
-            <div className='mt-1 absolute inset-x-0 z-10'>
-              <ListResults
-                items={searchResult.pokemon}
-                renderItem={item => (
-                  <Link href={`/pokemon/${item.id}`}>
-                    <a className='py-2 px-4 block'>{item.name}</a>
-                  </Link>
-                )}
-              />
-            </div>
-          )}
-        </div>
-
-        <div className='my-6 pb-24 flex max-w-5xl flex-wrap gap-6 items-center justify-center sm:w-full'>
-          {data?.pokemon.map(poke => (
-            <PokemonCard
-              key={poke.id}
-              id={poke.id}
-              name={poke.name}
-              imageSrc={`${pokemonEndPoint}/assets/${poke.image?.id}?access_token=${pokemonToken}`}
+        <main className='px-5 py-6 flex-1 overflow-y-auto sm:px-10 xl:px-20'>
+          <div className='max-w-5xl mx-auto sticky top-0 z-10'>
+            <SearchBox
+              name='q'
+              handleSearch={(event, query) => {
+                event.preventDefault()
+                router.push({
+                  pathname: '/',
+                  query: { q: query }
+                })
+              }}
+              onChange={setSearchQuery}
             />
-          ))}
-        </div>
+            {searchResult && (
+              <div className='mt-1 absolute inset-x-0 z-10'>
+                <ListResults
+                  items={searchResult.pokemon}
+                  renderItem={item => (
+                    <Link href={`/pokemon/${item.id}`}>
+                      <a className='py-2 px-4 block'>{item.name}</a>
+                    </Link>
+                  )}
+                />
+              </div>
+            )}
+          </div>
 
-        <div className='py-5 flex flex-col gap-3 bg-white shadow-inner fixed bottom-0 inset-x-0'>
+          <div className='mt-6 mx-auto flex max-w-5xl flex-wrap gap-6 items-center justify-center'>
+            {data?.pokemon.map(poke => (
+              <PokemonCard
+                key={poke.id}
+                id={poke.id}
+                name={poke.name}
+                imageSrc={`${pokemonEndPoint}/assets/${poke.image?.id}?access_token=${pokemonToken}`}
+              />
+            ))}
+          </div>
+        </main>
+
+        <footer className='py-2 flex flex-col gap-2 bg-white shadow-inner'>
           <Pagination
             total={totalPokemons}
             pageSize={pageSize}
             onPageChange={setPageIndex}
             disabled={isPreviousData}
           />
-        </div>
-      </main>
-    </div>
+        </footer>
+      </div>
+    </>
   )
 }
 

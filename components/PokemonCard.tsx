@@ -22,6 +22,7 @@ const PokemonCard = ({
           layout='intrinsic'
           width={400}
           height={300}
+          alt={`Image of ${name}`}
         />
       </a>
     </Link>

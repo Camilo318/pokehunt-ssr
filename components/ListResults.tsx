@@ -1,16 +1,27 @@
-import React, { ReactNode } from 'react'
+import React, {
+  ReactNode,
+  AriaAttributes,
+  ComponentPropsWithoutRef
+} from 'react'
+
+interface ListProps<T>
+  extends AriaAttributes,
+    ComponentPropsWithoutRef<'ul'> {
+  items: Array<T>
+  notFoundMsg?: string
+  renderItem: (item: T) => ReactNode
+}
 
 function ListResults<T>({
   items,
   renderItem,
-  notFoundMsg = 'No results found'
-}: {
-  items: Array<T>
-  notFoundMsg?: string
-  renderItem: (item: T) => ReactNode
-}) {
+  notFoundMsg = 'No results found',
+  ...props
+}: ListProps<T>) {
   return (
-    <ul className='w-full max-h-64 overflow-y-auto text-sm font-normal text-gray-500 bg-white rounded-md border border-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:text-white'>
+    <ul
+      {...props}
+      className='w-full max-h-64 overflow-y-auto text-sm font-normal text-gray-500 bg-white rounded-md border border-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:text-white'>
       {items.length > 0 ? (
         items.map((item, index) => (
           <li
