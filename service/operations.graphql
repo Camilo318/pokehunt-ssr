@@ -1,33 +1,35 @@
-fragment pokemonFields on pokemon {
-  id
-  name
-  hp
-  attack
-  defense
-  image {
+query getPokemons($limit: Int, $offset: Int) {
+  gen3_species: pokemon_v2_pokemonspecies(
+    order_by: { id: asc }
+    limit: $limit
+    offset: $offset
+  ) {
+    name
     id
-  }
-}
-
-query getPokemons($limit: Int, $page: Int) {
-  pokemon(limit: $limit, page: $page) {
-    ...pokemonFields
-  }
-  pokemon_aggregated {
-    count {
-      id
+    pokemon_v2_pokemons {
+      pokemon_v2_pokemontypes {
+        pokemon_v2_type {
+          name
+        }
+      }
+    }
+    pokemon_v2_pokemoncolor {
+      name
+    }
+    pokemon_v2_evolutionchain {
+      pokemon_v2_pokemonspecies {
+        id
+        name
+      }
+    }
+    pokemon_v2_generation {
+      name
     }
   }
-}
 
-query getPokemonById($id: ID!) {
-  pokemon_by_id(id: $id) {
-    ...pokemonFields
-  }
-}
-
-query searchPokemons($name: String) {
-  pokemon(filter: { name: { _contains: $name } }) {
-    ...pokemonFields
+  total: pokemon_v2_pokemonspecies_aggregate {
+    aggregate {
+      count
+    }
   }
 }

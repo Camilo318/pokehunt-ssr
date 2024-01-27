@@ -56,7 +56,7 @@ const Pagination = ({
         entries
       </p>
       <nav aria-label='pagination'>
-        <ul className='px-5 flex items-center justify-center -space-x-px overflow-x-auto w-full snap-x'>
+        <ul className='px-5 flex items-center justify-start -space-x-px overflow-x-auto w-full snap-x'>
           <li>
             <button
               onClick={() => handlePageChange(pageIndex - 1)}
