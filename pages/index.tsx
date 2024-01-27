@@ -7,9 +7,7 @@ import { useRouter } from 'next/router'
 
 import {
   GetPokemonsQuery,
-  GetPokemonsDocument,
-  SearchPokemonsQuery,
-  SearchPokemonsDocument
+  GetPokemonsDocument
 } from '../service/graphql'
 import { request } from 'graphql-request'
 import PokemonCard from '../components/PokemonCard'
@@ -20,16 +18,16 @@ import Header from '../components/Header'
 
 import { useDebounce } from '../hooks/index'
 
-const pokemonEndPoint = `${process.env.NEXT_PUBLIC_DIRECTUS_URL}`
-const pokemonToken = `${process.env.NEXT_PUBLIC_DIRECTUS_TOKEN}`
+const pokemonEndPoint = `${process.env.NEXT_PUBLIC_POKEMON_URL}`
 
 const Home = ({
   pokeFallback
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [pageIndex, setPageIndex] = useState<number>(1)
   const [pageSize] = useState<number>(24)
-  const totalPokemons =
-    pokeFallback.pokemon_aggregated[0].count?.id ?? 0
+
+  const offset = (pageIndex - 1) * pageSize
+  const totalPokemons = pokeFallback.total.aggregate?.count ?? 0
 
   const router = useRouter()
 
@@ -37,14 +35,11 @@ const Home = ({
     ['pokemons', pageIndex],
     async () => {
       const pokeInfo = await request<GetPokemonsQuery>(
-        `${pokemonEndPoint}/graphql`,
+        `${pokemonEndPoint}`,
         GetPokemonsDocument,
         {
           limit: pageSize,
-          page: pageIndex
-        },
-        {
-          authorization: `Bearer ${pokemonToken}`
+          offset: offset
         }
       )
       return pokeInfo
@@ -63,25 +58,25 @@ const Home = ({
     600
   )
 
-  const { data: searchResult } = useQuery(
-    ['searchResult', debouncedSearchQuery],
-    async () => {
-      const response = await request<SearchPokemonsQuery>(
-        `${pokemonEndPoint}/graphql`,
-        SearchPokemonsDocument,
-        { name: debouncedSearchQuery },
-        {
-          authorization: `Bearer ${pokemonToken}`
-        }
-      )
+  // const { data: searchResult } = useQuery(
+  //   ['searchResult', debouncedSearchQuery],
+  //   async () => {
+  //     const response = await request<SearchPokemonsQuery>(
+  //       `${pokemonEndPoint}/graphql`,
+  //       SearchPokemonsDocument,
+  //       { name: debouncedSearchQuery },
+  //       {
+  //         authorization: `Bearer ${pokemonToken}`
+  //       }
+  //     )
 
-      return response
-    },
-    {
-      enabled: !!debouncedSearchQuery,
-      refetchOnWindowFocus: false
-    }
-  )
+  //     return response
+  //   },
+  //   {
+  //     enabled: Boolean(debouncedSearchQuery),
+  //     refetchOnWindowFocus: false
+  //   }
+  // )
 
   return (
     <>
@@ -106,7 +101,7 @@ const Home = ({
               }}
               onChange={setSearchQuery}
             />
-            {searchResult && (
+            {/* {searchResult && (
               <div className='mt-1 absolute inset-x-0 z-10'>
                 <ListResults
                   items={searchResult.pokemon}
@@ -117,16 +112,15 @@ const Home = ({
                   )}
                 />
               </div>
-            )}
+            )} */}
           </div>
 
           <div className='mt-6 mx-auto flex max-w-5xl flex-wrap gap-6 items-center justify-center'>
-            {data?.pokemon.map(poke => (
+            {data?.gen3_species.map(poke => (
               <PokemonCard
                 key={poke.id}
-                id={poke.id}
+                id={String(poke.id).padStart(3, '0')}
                 name={poke.name}
-                imageSrc={`${pokemonEndPoint}/assets/${poke.image?.id}?access_token=${pokemonToken}`}
               />
             ))}
           </div>
@@ -147,14 +141,11 @@ const Home = ({
 
 export async function getServerSideProps() {
   const pokeData = await request<GetPokemonsQuery>(
-    `${pokemonEndPoint}/graphql`,
+    `${pokemonEndPoint}`,
     GetPokemonsDocument,
     {
       limit: 24,
-      page: 1
-    },
-    {
-      authorization: `Bearer ${pokemonToken}`
+      offset: 0
     }
   )
 

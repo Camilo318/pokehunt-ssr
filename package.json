@@ -13,6 +13,7 @@
     "graphql-request": "^4.3.0",
     "next": "latest",
     "react": "18.1.0",
+    "react-aria-components": "^1.0.1",
     "react-dom": "18.1.0",
     "react-query": "^3.39.1"
   },
