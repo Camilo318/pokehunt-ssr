@@ -28,6 +28,9 @@ const Home = ({
 
   const offset = (pageIndex - 1) * pageSize
   const totalPokemons = pokeFallback.total.aggregate?.count ?? 0
+  const pageCount = Math.ceil(totalPokemons / pageSize) // number of pages
+  const lastItem = pageIndex * pageSize
+  const firstItem = lastItem - pageSize + 1
 
   const router = useRouter()
 
@@ -126,12 +129,27 @@ const Home = ({
           </div>
         </main>
 
-        <footer className='py-2 flex flex-col gap-2 bg-white shadow-inner'>
+        <footer className='pt-3 flex flex-col gap-2 bg-white shadow-inner'>
+          <p className='text-sm text-gray-700'>
+            Showing{' '}
+            <span className='font-semibold text-gray-900'>
+              {' '}
+              {firstItem}{' '}
+            </span>
+            to{' '}
+            <span className='font-semibold text-gray-900'>
+              {Math.min(lastItem, totalPokemons)}
+            </span>{' '}
+            of{' '}
+            <span className='font-semibold text-gray-900'>
+              {totalPokemons}
+            </span>{' '}
+            entries
+          </p>
           <Pagination
-            total={totalPokemons}
-            pageSize={pageSize}
+            pageCount={pageCount}
             onPageChange={setPageIndex}
-            disabled={isPreviousData}
+            isDisabled={isPreviousData}
           />
         </footer>
       </div>
