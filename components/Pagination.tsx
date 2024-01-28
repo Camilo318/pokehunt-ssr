@@ -1,27 +1,20 @@
 import { useState, useEffect } from 'react'
+import { cn } from '../lib/utils'
 
 const Pagination = ({
   initialPage = 1,
   currentPage,
-  pageSize = 10,
-  total = 0,
-  disabled = false,
+  pageCount,
+  isDisabled = false,
   onPageChange = () => {}
 }: {
   initialPage?: number
   currentPage?: number
-  pageSize?: number
-  total?: number
-  disabled?: boolean
+  pageCount: number
+  isDisabled?: boolean
   onPageChange?: (page: number) => void
 }) => {
   const [pageIndex, setPageIndex] = useState(initialPage)
-
-  const pageCount = Math.ceil(total / pageSize)
-
-  // entries in page
-  const lastEntry = pageIndex * pageSize
-  const firstEntry = lastEntry - pageSize + 1
 
   const pagesArray = Array.from(
     { length: pageCount },
@@ -40,108 +33,85 @@ const Pagination = ({
   }
 
   return (
-    <>
-      <p className='text-sm text-gray-700'>
-        Showing{' '}
-        <span className='font-semibold text-gray-900'>
-          {' '}
-          {firstEntry}
-        </span>{' '}
-        to{' '}
-        <span className='font-semibold text-gray-900'>
-          {Math.min(lastEntry, total)}
-        </span>{' '}
-        of{' '}
-        <span className='font-semibold text-gray-900'>{total}</span>{' '}
-        entries
-      </p>
-      <nav aria-label='pagination'>
-        <ul className='px-5 flex items-center justify-start -space-x-px overflow-x-auto w-full snap-x'>
-          <li>
-            <button
-              onClick={() => handlePageChange(pageIndex - 1)}
-              disabled={pageIndex === 1 || disabled}
-              className={`block py-2 px-3 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${
-                pageIndex === 1 || disabled
-                  ? 'cursor-not-allowed'
-                  : ''
-              }`}>
-              <span className='sr-only'>Previous</span>
-              <svg
-                aria-hidden='true'
-                className='w-5 h-5'
-                fill='currentColor'
-                viewBox='0 0 20 20'
-                xmlns='http://www.w3.org/2000/svg'>
-                <path
-                  fillRule='evenodd'
-                  d='M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z'
-                  clipRule='evenodd'></path>
-              </svg>
-            </button>
-          </li>
-          {pagesArray.map(page => (
-            <PageItem
-              disabled={disabled}
-              key={page}
-              page={page}
-              isCurrentPage={page === pageIndex}
-              onPageChange={handlePageChange}
-            />
-          ))}
-          <li>
-            <button
-              onClick={() => handlePageChange(pageIndex + 1)}
-              disabled={pagesArray.length === pageIndex || disabled}
-              className={`block py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${
-                pagesArray.length === pageIndex || disabled
-                  ? 'cursor-not-allowed'
-                  : ''
-              }`}>
-              <span className='sr-only'>Next</span>
-              <svg
-                aria-hidden='true'
-                className='w-5 h-5'
-                fill='currentColor'
-                viewBox='0 0 20 20'
-                xmlns='http://www.w3.org/2000/svg'>
-                <path
-                  fillRule='evenodd'
-                  d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z'
-                  clipRule='evenodd'></path>
-              </svg>
-            </button>
-          </li>
-        </ul>
-      </nav>
-    </>
+    <nav
+      aria-label='pagination navigation'
+      role='navigation'
+      className='px-5'>
+      <div className='mb-2 flex justify-center gap-4'>
+        <button
+          aria-label='previous page button'
+          disabled={pageIndex === 1 || isDisabled}
+          onClick={() => handlePageChange(pageIndex - 1)}>
+          <span className='sr-only'>Previous</span>
+          <svg
+            aria-hidden='true'
+            className='w-5 h-5'
+            fill='currentColor'
+            viewBox='0 0 20 20'
+            xmlns='http://www.w3.org/2000/svg'>
+            <path
+              fillRule='evenodd'
+              d='M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z'
+              clipRule='evenodd'></path>
+          </svg>
+        </button>
+        <button
+          aria-label='next page button'
+          disabled={pageIndex === pagesArray.length || isDisabled}
+          onClick={() => handlePageChange(pageIndex + 1)}>
+          <span className='sr-only'>Next</span>
+          <svg
+            aria-hidden='true'
+            className='w-5 h-5'
+            fill='currentColor'
+            viewBox='0 0 20 20'
+            xmlns='http://www.w3.org/2000/svg'>
+            <path
+              fillRule='evenodd'
+              d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z'
+              clipRule='evenodd'></path>
+          </svg>
+        </button>
+      </div>
+      <ul className='pb-5 flex items-center justify-start gap-1 w-full overflow-x-auto'>
+        {pagesArray.map(page => (
+          <PageItem
+            key={page}
+            page={page}
+            isDisabled={isDisabled}
+            isCurrentPage={page === pageIndex}
+            onPageChange={page => handlePageChange(page as number)}
+          />
+        ))}
+      </ul>
+    </nav>
   )
 }
 
 const PageItem = ({
   page,
-  isCurrentPage,
-  disabled = false,
+  isCurrentPage = false,
+  isDisabled = false,
   onPageChange = () => {}
 }: {
   page: number
-  isCurrentPage: boolean
-  disabled?: boolean
+  isCurrentPage?: boolean
+  isDisabled?: boolean
   onPageChange: (page: number) => void
 }) => {
-  const currentPageStyles =
-    'text-blue-600 bg-blue-50 border border-blue-300 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white z-10'
-  const defaultPageStyles =
-    'text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
   return (
-    <li className='snap-center'>
+    <li
+      aria-current={isCurrentPage ? 'page' : 'false'}
+      aria-label={`pagination item ${page}`}>
       <button
-        disabled={disabled}
+        disabled={isDisabled}
         onClick={() => onPageChange(page)}
-        aria-current={isCurrentPage ? 'page' : 'false'}
-        className={`py-2 px-3 relative leading-tight ${
-          disabled && 'cursor-not-allowed'
-        } ${isCurrentPage ? currentPageStyles : defaultPageStyles}`}>
+        className={cn(
+          'relative leading-tight flex justify-center items-center text-gray-500 bg-white border w-9 h-9 rounded-xl border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white',
+          isDisabled && 'cursor-not-allowed',
+          isCurrentPage &&
+            'text-blue-600 bg-blue-50 border-blue-300 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white'
+        )}>
         {page}
       </button>
     </li>
