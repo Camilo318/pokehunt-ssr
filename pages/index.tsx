@@ -17,6 +17,7 @@ import ListResults from '../components/ListResults'
 import Header from '../components/Header'
 
 import { useDebounce } from '../hooks/index'
+import { formatId } from '../lib/utils'
 
 const pokemonEndPoint = `${process.env.NEXT_PUBLIC_POKEMON_URL}`
 
@@ -119,10 +120,10 @@ const Home = ({
           </div>
 
           <div className='mt-6 mx-auto flex max-w-5xl flex-wrap gap-6 items-center justify-center'>
-            {data?.gen3_species.map(poke => (
+            {data?.pokemon_species.map(poke => (
               <PokemonCard
                 key={poke.id}
-                id={String(poke.id).padStart(3, '0')}
+                id={formatId(String(poke.id))}
                 name={poke.name}
               />
             ))}

@@ -1,8 +1,7 @@
 import { request } from 'graphql-request'
 import {
   GetPokemonByIdQuery,
-  GetPokemonByIdDocument,
-  Pokemon
+  GetPokemonByIdDocument
 } from '../../service/graphql'
 
 import Image from 'next/image'
@@ -13,45 +12,55 @@ import {
   InferGetServerSidePropsType
 } from 'next'
 
-const pokemonEndPoint = `${process.env.NEXT_PUBLIC_DIRECTUS_URL}`
-const pokemonToken = `${process.env.NEXT_PUBLIC_DIRECTUS_TOKEN}`
+import Header from '../../components/Header'
+import { formatId } from '../../lib/utils'
+
+const pokemonEndPoint = `${process.env.NEXT_PUBLIC_POKEMON_URL}`
 
 const PokemonInfo = ({
   pokemon
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const [{ id, name, pokemon_v2_pokemons, pokemon_v2_generation }] =
+    pokemon
+  const [{ pokemon_v2_pokemonstats, pokemon_v2_pokemontypes }] =
+    pokemon_v2_pokemons
+  const formattedId = formatId(String(id))
+  const imageSrc = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${formattedId}.png`
   return (
-    <div className='max-w-sm bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700'>
-      <Head>
-        <title>PokeHunt | {pokemon.name}</title>
-        <link rel='icon' href='/pikachu.png' />
-      </Head>
-      <div className='p-5'>
-        <Image
-          src={`${pokemonEndPoint}/assets/${pokemon?.image?.id}?access_token=${pokemonToken}`}
-          layout='intrinsic'
-          width={400}
-          height={300}
-          alt={`Image of ${pokemon.name}`}
-        />
+    <>
+      <Header />
+      <div className='max-w-sm bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700'>
+        <Head>
+          <title>PokeHunt | {name}</title>
+          <link rel='icon' href='/pikachu.png' />
+        </Head>
+        <div className='p-5'>
+          <Image
+            src={imageSrc}
+            layout='intrinsic'
+            width={400}
+            height={300}
+            alt={`Image of ${name}`}
+          />
 
-        <h5 className='mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white'>
-          {pokemon?.name}
-        </h5>
+          <h5 className='mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white'>
+            {name}
+          </h5>
+          <h4>Generation: {pokemon_v2_generation?.name}</h4>
+          {pokemon_v2_pokemonstats.map(stat => (
+            <p
+              key={stat.id}
+              className='mb-3 font-normal text-gray-700 dark:text-gray-400'>
+              {stat.pokemon_v2_stat?.name}: {stat.base_stat}
+            </p>
+          ))}
 
-        <p className='mb-3 font-normal text-gray-700 dark:text-gray-400'>
-          {pokemon?.attack}
-        </p>
-        <p className='mb-3 font-normal text-gray-700 dark:text-gray-400'>
-          {pokemon?.defense}
-        </p>
-        <p className='mb-3 font-normal text-gray-700 dark:text-gray-400'>
-          {pokemon?.hp}
-        </p>
-        <button className='inline-flex items-center py-2 px-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'>
-          Read more
-        </button>
+          <button className='inline-flex items-center py-2 px-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'>
+            Read more
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
@@ -61,18 +70,15 @@ export const getServerSideProps = async ({
   const { id } = params as Record<string, string | number>
 
   const pokeInfo = await request<GetPokemonByIdQuery>(
-    `${pokemonEndPoint}/graphql`,
+    `${pokemonEndPoint}`,
     GetPokemonByIdDocument,
     {
       id
-    },
-    {
-      authorization: `Bearer ${pokemonToken}`
     }
   )
   return {
     props: {
-      pokemon: pokeInfo['pokemon_by_id'] as Pokemon
+      pokemon: pokeInfo.pokemon
     }
   }
 }
