@@ -1,5 +1,5 @@
 query getPokemons($limit: Int, $offset: Int) {
-  gen3_species: pokemon_v2_pokemonspecies(
+  pokemon_species: pokemon_v2_pokemonspecies(
     order_by: { id: asc }
     limit: $limit
     offset: $offset
@@ -7,6 +7,51 @@ query getPokemons($limit: Int, $offset: Int) {
     name
     id
     pokemon_v2_pokemons {
+      pokemon_v2_pokemontypes {
+        pokemon_v2_type {
+          name
+        }
+      }
+    }
+    pokemon_v2_pokemoncolor {
+      name
+    }
+    pokemon_v2_generation {
+      name
+    }
+  }
+
+  total: pokemon_v2_pokemonspecies_aggregate {
+    aggregate {
+      count
+    }
+  }
+}
+
+query getPokemonById($id: Int) {
+  pokemon: pokemon_v2_pokemonspecies(where: { id: { _eq: $id } }) {
+    name
+    id
+    pokemon_v2_pokemons {
+      height
+      weight
+      pokemon_v2_pokemonmoves {
+        pokemon_v2_move {
+          name
+        }
+      }
+      pokemon_v2_pokemonabilities {
+        pokemon_v2_ability {
+          name
+        }
+      }
+      pokemon_v2_pokemonstats {
+        id
+        base_stat
+        pokemon_v2_stat {
+          name
+        }
+      }
       pokemon_v2_pokemontypes {
         pokemon_v2_type {
           name
@@ -24,12 +69,6 @@ query getPokemons($limit: Int, $offset: Int) {
     }
     pokemon_v2_generation {
       name
-    }
-  }
-
-  total: pokemon_v2_pokemonspecies_aggregate {
-    aggregate {
-      count
     }
   }
 }
