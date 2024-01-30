@@ -15,7 +15,7 @@ import { request } from 'graphql-request'
 import PokemonCard from '../components/PokemonCard'
 import SearchBox from '../components/SearchBox'
 import Pagination from '../components/Pagination'
-import ListResults from '../components/ListResults'
+import { MyListBox, MyItem } from '../components/ListBox'
 import Header from '../components/Header'
 
 import { useDebounce } from '../hooks/index'
@@ -105,16 +105,23 @@ const Home = ({
             />
             {searchResult && (
               <div className='mt-1 absolute inset-x-0 z-10'>
-                <ListResults
+                <MyListBox
                   items={searchResult.pokemonSearch}
-                  renderItem={item => (
-                    <Link href={`/pokemon/${item.id}`}>
-                      <a className='py-2 px-4 block capitalize'>
-                        {item.name}
-                      </a>
-                    </Link>
+                  renderEmptyState={() => (
+                    <span className='py-2 px-4 block'>
+                      No results found
+                    </span>
+                  )}>
+                  {item => (
+                    <MyItem>
+                      <Link href={`/pokemon/${item.id}`}>
+                        <a className='py-2 px-4 block capitalize'>
+                          {item.name}
+                        </a>
+                      </Link>
+                    </MyItem>
                   )}
-                />
+                </MyListBox>
               </div>
             )}
           </div>
