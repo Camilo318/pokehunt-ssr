@@ -7,7 +7,9 @@ import { useRouter } from 'next/router'
 
 import {
   GetPokemonsQuery,
-  GetPokemonsDocument
+  GetPokemonsDocument,
+  GetPokemonByQuerySearchQuery,
+  GetPokemonByQuerySearchDocument
 } from '../service/graphql'
 import { request } from 'graphql-request'
 import PokemonCard from '../components/PokemonCard'
@@ -61,25 +63,22 @@ const Home = ({
     600
   )
 
-  // const { data: searchResult } = useQuery(
-  //   ['searchResult', debouncedSearchQuery],
-  //   async () => {
-  //     const response = await request<SearchPokemonsQuery>(
-  //       `${pokemonEndPoint}/graphql`,
-  //       SearchPokemonsDocument,
-  //       { name: debouncedSearchQuery },
-  //       {
-  //         authorization: `Bearer ${pokemonToken}`
-  //       }
-  //     )
+  const { data: searchResult } = useQuery(
+    ['searchResult', debouncedSearchQuery],
+    async () => {
+      const response = await request<GetPokemonByQuerySearchQuery>(
+        `${pokemonEndPoint}`,
+        GetPokemonByQuerySearchDocument,
+        { query: debouncedSearchQuery }
+      )
 
-  //     return response
-  //   },
-  //   {
-  //     enabled: Boolean(debouncedSearchQuery),
-  //     refetchOnWindowFocus: false
-  //   }
-  // )
+      return response
+    },
+    {
+      enabled: Boolean(debouncedSearchQuery),
+      refetchOnWindowFocus: false
+    }
+  )
 
   return (
     <>
@@ -104,18 +103,20 @@ const Home = ({
               }}
               onChange={setSearchQuery}
             />
-            {/* {searchResult && (
+            {searchResult && (
               <div className='mt-1 absolute inset-x-0 z-10'>
                 <ListResults
-                  items={searchResult.pokemon}
+                  items={searchResult.pokemonSearch}
                   renderItem={item => (
                     <Link href={`/pokemon/${item.id}`}>
-                      <a className='py-2 px-4 block'>{item.name}</a>
+                      <a className='py-2 px-4 block capitalize'>
+                        {item.name}
+                      </a>
                     </Link>
                   )}
                 />
               </div>
-            )} */}
+            )}
           </div>
 
           <div className='mt-6 mx-auto flex max-w-5xl flex-wrap gap-6 items-center justify-center'>
