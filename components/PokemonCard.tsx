@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { getPokemonImage } from '../lib/utils'
 
 const PokemonCard = ({
   id,
@@ -8,7 +9,7 @@ const PokemonCard = ({
   id: string
   name?: string | null
 }) => {
-  const imageSrc = `https://assets.pokemon.com/assets/cms2/img/pokedex/detail/${id}.png`
+  const imageSrc = getPokemonImage(id)
   return (
     <Link href={`/pokemon/${id}`}>
       <a className='flex-1 max-w-[350px] basis-64 shrink-0 rounded-xl border p-6 text-left'>
@@ -19,8 +20,8 @@ const PokemonCard = ({
         <Image
           src={imageSrc}
           layout='intrinsic'
-          width={400}
-          height={300}
+          width={512}
+          height={512}
           alt={`Image of ${name}`}
         />
       </a>

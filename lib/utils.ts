@@ -11,3 +11,7 @@ export function formatId(id: string) {
   }
   return id.padStart(3, '0')
 }
+
+export function getPokemonImage(id: number | string) {
+  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${id}.png`
+}
