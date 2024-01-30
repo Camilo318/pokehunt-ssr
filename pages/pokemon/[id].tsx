@@ -43,7 +43,7 @@ const PokemonInfo = ({
             alt={`Image of ${name}`}
           />
 
-          <h5 className='mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white'>
+          <h5 className='mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white capitalize'>
             {name}
           </h5>
           <h4>{pokemon_v2_generation?.name}</h4>

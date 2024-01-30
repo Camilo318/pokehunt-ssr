@@ -72,3 +72,12 @@ query getPokemonById($id: Int) {
     }
   }
 }
+
+query getPokemonByQuerySearch($query: String) {
+  pokemonSearch: pokemon_v2_pokemonspecies(
+    where: { name: { _iregex: $query } }
+  ) {
+    name
+    id
+  }
+}
