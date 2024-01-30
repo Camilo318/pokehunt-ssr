@@ -17,7 +17,6 @@ import ListResults from '../components/ListResults'
 import Header from '../components/Header'
 
 import { useDebounce } from '../hooks/index'
-import { formatId } from '../lib/utils'
 
 const pokemonEndPoint = `${process.env.NEXT_PUBLIC_POKEMON_URL}`
 
@@ -123,7 +122,7 @@ const Home = ({
             {data?.pokemon_species.map(poke => (
               <PokemonCard
                 key={poke.id}
-                id={formatId(String(poke.id))}
+                id={String(poke.id)}
                 name={poke.name}
               />
             ))}

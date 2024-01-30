@@ -13,7 +13,7 @@ import {
 } from 'next'
 
 import Header from '../../components/Header'
-import { formatId } from '../../lib/utils'
+import { formatId, getPokemonImage } from '../../lib/utils'
 
 const pokemonEndPoint = `${process.env.NEXT_PUBLIC_POKEMON_URL}`
 
@@ -24,8 +24,8 @@ const PokemonInfo = ({
     pokemon
   const [{ pokemon_v2_pokemonstats, pokemon_v2_pokemontypes }] =
     pokemon_v2_pokemons
-  const formattedId = formatId(String(id))
-  const imageSrc = `https://assets.pokemon.com/assets/cms2/img/pokedex/full/${formattedId}.png`
+
+  const imageSrc = getPokemonImage(id)
   return (
     <>
       <Header />
@@ -38,15 +38,15 @@ const PokemonInfo = ({
           <Image
             src={imageSrc}
             layout='intrinsic'
-            width={400}
-            height={300}
+            width={512}
+            height={512}
             alt={`Image of ${name}`}
           />
 
           <h5 className='mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white'>
             {name}
           </h5>
-          <h4>Generation: {pokemon_v2_generation?.name}</h4>
+          <h4>{pokemon_v2_generation?.name}</h4>
           {pokemon_v2_pokemonstats.map(stat => (
             <p
               key={stat.id}
