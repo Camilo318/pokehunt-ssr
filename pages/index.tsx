@@ -13,9 +13,9 @@ import {
 } from '../service/graphql'
 import { request } from 'graphql-request'
 import PokemonCard from '../components/PokemonCard'
-import SearchBox from '../components/SearchBox'
 import Pagination from '../components/Pagination'
-import { MyListBox, MyItem } from '../components/ListBox'
+import { MyItem } from '../components/ListBox'
+import { MyComboBox } from '../components/ComboBox'
 import Header from '../components/Header'
 
 import { useDebounce } from '../hooks/index'
@@ -92,41 +92,24 @@ const Home = ({
 
         <main className='px-5 py-6 flex-1 overflow-y-auto sm:px-10 xl:px-20'>
           <div className='max-w-5xl mx-auto sticky top-0 z-10'>
-            <SearchBox
-              name='q'
-              handleSearch={(event, query) => {
-                event.preventDefault()
-                router.push({
-                  pathname: '/',
-                  query: { q: query }
-                })
-              }}
-              onChange={setSearchQuery}
-            />
-            {searchResult && (
-              <div className='mt-1 absolute inset-x-0 z-10'>
-                <MyListBox
-                  items={searchResult.pokemonSearch}
-                  renderEmptyState={() => (
-                    <span className='py-2 px-4 block'>
-                      No results found
-                    </span>
-                  )}>
-                  {item => (
-                    <MyItem>
-                      <Link href={`/pokemon/${item.id}`}>
-                        <a className='py-2 px-4 block capitalize'>
-                          {item.name}
-                        </a>
-                      </Link>
-                    </MyItem>
-                  )}
-                </MyListBox>
-              </div>
-            )}
+            <MyComboBox
+              className='w-full'
+              aria-label='Search Pokemon'
+              items={searchResult?.pokemonSearch}
+              onInputChange={setSearchQuery}
+              placeholder='Search Pokemon'>
+              {item => (
+                <MyItem
+                  textValue={item.name}
+                  aria-label={item.name}
+                  href={`/pokemon/${item.id}`}>
+                  {item.name}
+                </MyItem>
+              )}
+            </MyComboBox>
           </div>
 
-          <div className='mt-6 mx-auto flex max-w-5xl flex-wrap gap-6 items-center justify-center'>
+          <div className='mt-6 mx-auto max-w-5xl gap-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'>
             {data?.pokemon_species.map(poke => (
               <PokemonCard
                 key={poke.id}
@@ -139,19 +122,24 @@ const Home = ({
 
         <footer className='pt-3 flex flex-col gap-2 bg-white shadow-inner'>
           <p className='text-sm text-gray-700'>
-            Showing{' '}
+            Showing
             <span className='font-semibold text-gray-900'>
-              {' '}
-              {firstItem}{' '}
+              <> </>
+              {firstItem}
+              <> </>
             </span>
-            to{' '}
+            -
             <span className='font-semibold text-gray-900'>
+              <> </>
               {Math.min(lastItem, totalPokemons)}
-            </span>{' '}
-            of{' '}
+              <> </>
+            </span>
+            of
             <span className='font-semibold text-gray-900'>
+              <> </>
               {totalPokemons}
-            </span>{' '}
+              <> </>
+            </span>
             entries
           </p>
           <Pagination

@@ -24,11 +24,10 @@ export function MyItem(props: ListBoxItemProps) {
   return (
     <ListBoxItem
       {...props}
-      className={({ isFocusVisible }) =>
+      className={({ isFocused }) =>
         cn(
-          'my-item',
-          'w-full border-b border-gray-200 dark:border-gray-600 last:border-b-0 hover:bg-gray-100 hover:text-gray-700 outline-none',
-          isFocusVisible && 'bg-gray-100 text-gray-700'
+          'my-item py-2 px-4 block capitalize w-full border-b border-gray-200 dark:border-gray-600 last:border-b-0 outline-none',
+          isFocused && 'bg-gray-100 text-gray-700'
         )
       }
     />

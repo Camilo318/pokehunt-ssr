@@ -12,7 +12,7 @@ const PokemonCard = ({
   const imageSrc = getPokemonImage(id)
   return (
     <Link href={`/pokemon/${id}`}>
-      <a className='flex-1 max-w-[350px] basis-64 shrink-0 rounded-xl border p-6 text-left'>
+      <a className='rounded-xl border p-3 md:p-6 text-left'>
         <h3 className='mb-3 text-2xl text-slate-900 font-bold hover:text-blue-600 focus:text-blue-600 capitalize'>
           {name} &rarr;
         </h3>
