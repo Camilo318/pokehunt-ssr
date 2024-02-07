@@ -15,3 +15,6 @@ export function formatId(id: string) {
 export function getPokemonImage(id: number | string) {
   return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${id}.png`
 }
+
+export const weightInKg = (weight: number) => `${weight / 10}kg`
+export const heightInMeter = (height: number) => `${height / 10}m`
