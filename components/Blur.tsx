@@ -4,10 +4,10 @@ import { bgColors } from '../constants/colors'
 
 const Blur = ({
   bgColor,
-  classes
+  className
 }: {
   bgColor: string
-  classes?: string
+  className?: string
 }) => {
   return (
     <div
@@ -15,8 +15,8 @@ const Blur = ({
         backgroundColor: bgColors[bgColor]
       }}
       className={cn(
-        'absolute w-48 h-48 top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 -z-10 blur-[128px]',
-        classes
+        'absolute w-1/2 h-1/2 top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 -z-10 blur-[128px]',
+        className
       )}></div>
   )
 }

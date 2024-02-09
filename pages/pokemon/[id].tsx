@@ -40,6 +40,7 @@ const PokemonInfo = ({
   ] = pokemon_v2_pokemons
 
   const imageSrc = getPokemonImage(id)
+
   return (
     <>
       <Head>
@@ -49,8 +50,8 @@ const PokemonInfo = ({
 
       <Header />
 
-      <main className='p-5 flex flex-col items-center md:flex-row md:items-start max-w-5xl mx-auto gap-4'>
-        <div className='max-w-sm flex-initial rounded-xl relative'>
+      <main className='p-5 flex flex-col items-center md:flex-row md:items-start max-w-5xl mx-auto gap-4 min-h-screen'>
+        <div className='max-w-sm flex-initial relative p-4 glass'>
           <Blur
             bgColor={
               pokemon_v2_pokemontypes[0].pokemon_v2_type
@@ -77,7 +78,7 @@ const PokemonInfo = ({
           </div>
         </div>
 
-        <div className='md:mx-auto grid grid-cols-2 gap-7 justify-between sm:mt-8 relative'>
+        <div className='md:mx-auto grid grid-cols-2 gap-7 justify-between sm:mt-8 relative p-4 glass'>
           <Blur
             bgColor={
               pokemon_v2_pokemontypes[0].pokemon_v2_type
