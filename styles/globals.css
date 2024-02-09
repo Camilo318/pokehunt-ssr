@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .card {
+    @apply p-4 border rounded-2xl relative overflow-hidden;
+  }
+}
