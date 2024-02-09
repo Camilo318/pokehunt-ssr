@@ -116,6 +116,11 @@ const Home = ({
                   key={poke.id}
                   id={String(poke.id)}
                   name={poke.name}
+                  type={
+                    poke.pokemon_v2_pokemons[0]
+                      .pokemon_v2_pokemontypes[0].pokemon_v2_type
+                      ?.name as string
+                  }
                 />
               ))}
             </div>

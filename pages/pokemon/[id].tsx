@@ -51,13 +51,7 @@ const PokemonInfo = ({
       <Header />
 
       <main className='p-5 flex flex-col items-center md:flex-row md:items-start max-w-5xl mx-auto gap-4 min-h-screen'>
-        <div className='max-w-sm flex-initial relative p-4 glass'>
-          <Blur
-            bgColor={
-              pokemon_v2_pokemontypes[0].pokemon_v2_type
-                ?.name as string
-            }
-          />
+        <div className='max-w-sm flex-initial'>
           <h5 className='text-2xl tracking-tight text-gray-900 dark:text-white capitalize'>
             {name}{' '}
             <span className='ml-2 text-gray-600'>
@@ -78,13 +72,7 @@ const PokemonInfo = ({
           </div>
         </div>
 
-        <div className='md:mx-auto grid grid-cols-2 gap-7 justify-between sm:mt-8 relative p-4 glass'>
-          <Blur
-            bgColor={
-              pokemon_v2_pokemontypes[0].pokemon_v2_type
-                ?.name as string
-            }
-          />
+        <div className='md:mx-auto grid grid-cols-2 gap-7 justify-between sm:mt-8'>
           {pokemon_v2_pokemonstats.map(stat => (
             <Item
               key={stat.id}
