@@ -13,7 +13,14 @@ import {
 } from 'next'
 
 import Header from '../../components/Header'
-import { formatId, getPokemonImage } from '../../lib/utils'
+import {
+  formatId,
+  getPokemonImage,
+  heightInMeter,
+  weightInKg
+} from '../../lib/utils'
+import { Item, Value, Name } from '../../components/DataComponets'
+import Blur from '../../components/Blur'
 
 const pokemonEndPoint = `${process.env.NEXT_PUBLIC_POKEMON_URL}`
 
@@ -22,19 +29,35 @@ const PokemonInfo = ({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [{ id, name, pokemon_v2_pokemons, pokemon_v2_generation }] =
     pokemon
-  const [{ pokemon_v2_pokemonstats, pokemon_v2_pokemontypes }] =
-    pokemon_v2_pokemons
+  const [
+    {
+      pokemon_v2_pokemonstats,
+      pokemon_v2_pokemontypes,
+      pokemon_v2_pokemonabilities,
+      height,
+      weight
+    }
+  ] = pokemon_v2_pokemons
 
   const imageSrc = getPokemonImage(id)
+
   return (
     <>
+      <Head>
+        <title>PokeHunt | {name}</title>
+        <link rel='icon' href='/pikachu.png' />
+      </Head>
+
       <Header />
-      <div className='max-w-sm bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700'>
-        <Head>
-          <title>PokeHunt | {name}</title>
-          <link rel='icon' href='/pikachu.png' />
-        </Head>
-        <div className='p-5'>
+
+      <main className='p-5 flex flex-col items-center md:flex-row md:items-start max-w-5xl mx-auto gap-4 min-h-screen'>
+        <div className='max-w-sm flex-initial'>
+          <h5 className='text-2xl tracking-tight text-gray-900 dark:text-white capitalize'>
+            {name}{' '}
+            <span className='ml-2 text-gray-600'>
+              #{formatId(String(id))}
+            </span>
+          </h5>
           <Image
             src={imageSrc}
             layout='intrinsic'
@@ -42,24 +65,50 @@ const PokemonInfo = ({
             height={512}
             alt={`Image of ${name}`}
           />
-
-          <h5 className='mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white capitalize'>
-            {name}
-          </h5>
-          <h4>{pokemon_v2_generation?.name}</h4>
-          {pokemon_v2_pokemonstats.map(stat => (
-            <p
-              key={stat.id}
-              className='mb-3 font-normal text-gray-700 dark:text-gray-400'>
-              {stat.pokemon_v2_stat?.name}: {stat.base_stat}
-            </p>
-          ))}
-
-          <button className='inline-flex items-center py-2 px-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'>
-            Read more
-          </button>
+          <div className='flex flex-col gap-2'>
+            <h4 className='uppercase text-gray-700'>
+              {pokemon_v2_generation?.name}
+            </h4>
+          </div>
         </div>
-      </div>
+
+        <div className='md:mx-auto grid grid-cols-2 gap-7 justify-between sm:mt-8'>
+          {pokemon_v2_pokemonstats.map(stat => (
+            <Item
+              key={stat.id}
+              name={stat.pokemon_v2_stat?.name}
+              value={stat.base_stat}
+            />
+          ))}
+          <Item
+            name='Types'
+            value={pokemon_v2_pokemontypes.map(type => (
+              <span key={type.pokemon_v2_type?.id}>
+                {type.pokemon_v2_type?.name ?? ''}
+              </span>
+            ))}
+          />
+
+          <Item
+            name='Height'
+            value={heightInMeter(height as number)}
+          />
+          <Item name='Weight' value={weightInKg(weight as number)} />
+
+          <div>
+            <Name>Abilities:</Name>
+            <ul>
+              {pokemon_v2_pokemonabilities.map(
+                ({ pokemon_v2_ability }) => (
+                  <li key={pokemon_v2_ability?.name}>
+                    <Value>{pokemon_v2_ability?.name}</Value>
+                  </li>
+                )
+              )}
+            </ul>
+          </div>
+        </div>
+      </main>
     </>
   )
 }

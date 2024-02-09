@@ -55,6 +55,7 @@ query getPokemonById($id: Int) {
       pokemon_v2_pokemontypes {
         pokemon_v2_type {
           name
+          id
         }
       }
     }
