@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useQuery } from 'react-query'
 import type {
   GetServerSidePropsContext,
@@ -60,6 +60,16 @@ const Home = ({
     }
   )
 
+  const pokeContainerRef = useRef<HTMLDivElement>(null)
+  const scrollToTop = () => {
+    if (pokeContainerRef.current) {
+      pokeContainerRef.current.scrollTo({
+        top: 0,
+        left: 0
+      })
+    }
+  }
+
   return (
     <>
       <Head>
@@ -70,7 +80,9 @@ const Home = ({
       <div className='flex w-full flex-col text-center h-screen overflow-hidden'>
         <Header />
 
-        <main className='py-6 flex-1 overflow-y-auto'>
+        <main
+          className='py-6 flex-1 overflow-y-auto'
+          ref={pokeContainerRef}>
           <div className='px-5 sm:px-10 xl:px-20'>
             <div className='max-w-5xl mx-auto sticky top-0 z-10'>
               <MyComboBox
@@ -129,6 +141,7 @@ const Home = ({
                 router.push({
                   query: { page: page }
                 })
+                scrollToTop()
               }}
             />
           </div>
