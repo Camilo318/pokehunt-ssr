@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useQuery } from 'react-query'
-import type { InferGetServerSidePropsType } from 'next'
+import type {
+  GetServerSidePropsContext,
+  InferGetServerSidePropsType
+} from 'next'
 import Head from 'next/head'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 import {
@@ -23,38 +25,16 @@ import { useDebounce } from '../hooks/index'
 const pokemonEndPoint = `${process.env.NEXT_PUBLIC_POKEMON_URL}`
 
 const Home = ({
-  pokeFallback
+  pokeData,
+  currentPage
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const [pageIndex, setPageIndex] = useState<number>(1)
-  const [pageSize] = useState<number>(24)
-
-  const offset = (pageIndex - 1) * pageSize
-  const totalPokemons = pokeFallback.total.aggregate?.count ?? 0
-  const pageCount = Math.ceil(totalPokemons / pageSize) // number of pages
-  const lastItem = pageIndex * pageSize
-  const firstItem = lastItem - pageSize + 1
-
   const router = useRouter()
 
-  const { data, isPreviousData } = useQuery(
-    ['pokemons', pageIndex],
-    async () => {
-      const pokeInfo = await request<GetPokemonsQuery>(
-        `${pokemonEndPoint}`,
-        GetPokemonsDocument,
-        {
-          limit: pageSize,
-          offset: offset
-        }
-      )
-      return pokeInfo
-    },
-    {
-      initialData: pokeFallback,
-      keepPreviousData: true,
-      refetchOnWindowFocus: false
-    }
-  )
+  const [pageSize] = useState<number>(24)
+  const totalPokemons = pokeData.total.aggregate?.count ?? 0
+  const pageCount = Math.ceil(totalPokemons / pageSize) // number of pages
+  const lastItem = currentPage * pageSize
+  const firstItem = lastItem - pageSize + 1
 
   const [searchQuery, setSearchQuery] = useState<string>()
 
@@ -80,6 +60,16 @@ const Home = ({
     }
   )
 
+  const pokeContainerRef = useRef<HTMLDivElement>(null)
+  const scrollToTop = () => {
+    if (pokeContainerRef.current) {
+      pokeContainerRef.current.scrollTo({
+        top: 0,
+        left: 0
+      })
+    }
+  }
+
   return (
     <>
       <Head>
@@ -90,7 +80,9 @@ const Home = ({
       <div className='flex w-full flex-col text-center h-screen overflow-hidden'>
         <Header />
 
-        <main className='py-6 flex-1 overflow-y-auto'>
+        <main
+          className='py-6 flex-1 overflow-y-auto'
+          ref={pokeContainerRef}>
           <div className='px-5 sm:px-10 xl:px-20'>
             <div className='max-w-5xl mx-auto sticky top-0 z-10'>
               <MyComboBox
@@ -109,9 +101,8 @@ const Home = ({
                 )}
               </MyComboBox>
             </div>
-
             <div className='mt-6 mx-auto max-w-5xl gap-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'>
-              {data?.pokemon_species.map(poke => (
+              {pokeData?.pokemon_species.map(poke => (
                 <PokemonCard
                   key={poke.id}
                   id={String(poke.id)}
@@ -143,9 +134,15 @@ const Home = ({
               entries
             </p>
             <Pagination
+              currentPage={currentPage}
               pageCount={pageCount}
-              onPageChange={setPageIndex}
-              isDisabled={isPreviousData}
+              onPageChange={page => {
+                if (page === currentPage) return
+                router.push({
+                  query: { page: page }
+                })
+                scrollToTop()
+              }}
             />
           </div>
         </main>
@@ -154,19 +151,27 @@ const Home = ({
   )
 }
 
-export async function getServerSideProps() {
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const { page = '1' } = context.query
+  const currentPage = Number(page)
+  const pageSize = 24
+  const offset = (currentPage - 1) * pageSize
+
   const pokeData = await request<GetPokemonsQuery>(
     `${pokemonEndPoint}`,
     GetPokemonsDocument,
     {
-      limit: 24,
-      offset: 0
+      limit: pageSize,
+      offset
     }
   )
 
   return {
     props: {
-      pokeFallback: pokeData // fallback data
+      pokeData: pokeData, // actual data
+      currentPage
     }
   }
 }
