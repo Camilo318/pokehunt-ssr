@@ -77,7 +77,7 @@ const Home = ({
         <link rel='icon' href='/pikachu.png' />
       </Head>
 
-      <div className='flex w-full flex-col text-center h-screen overflow-hidden'>
+      <div className='flex w-full flex-col text-center h-svh overflow-hidden'>
         <Header />
 
         <main
