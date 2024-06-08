@@ -60,7 +60,6 @@ const PokemonInfo = ({
           </h5>
           <Image
             src={imageSrc}
-            layout='intrinsic'
             width={512}
             height={512}
             alt={`Image of ${name}`}
