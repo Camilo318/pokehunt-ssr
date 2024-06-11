@@ -36,14 +36,18 @@ const Home = ({
   const lastItem = currentPage * pageSize
   const firstItem = lastItem - pageSize + 1
 
-  const [searchQuery, setSearchQuery] = useState<string>()
+  const [searchQuery, setSearchQuery] = useState<string>('')
 
   const debouncedSearchQuery = useDebounce<typeof searchQuery>(
     searchQuery,
     600
   )
 
-  const { data: searchResult } = useQuery(
+  const {
+    data: searchResult,
+    isLoading,
+    isFetched
+  } = useQuery(
     ['searchResult', debouncedSearchQuery],
     async () => {
       const response = await request<GetPokemonByQuerySearchQuery>(
@@ -86,6 +90,13 @@ const Home = ({
           <div className='px-5 sm:px-10 xl:px-20'>
             <div className='max-w-5xl mx-auto sticky top-0 z-10'>
               <MyComboBox
+                renderEmptyState={() => (
+                  <span className=' py-2 px-4 block w-full'>
+                    {isLoading && 'Loading...'}
+                    {isFetched && 'No pokemons found'}
+                  </span>
+                )}
+                allowsEmptyCollection
                 className='w-full'
                 aria-label='Search Pokemon'
                 items={searchResult?.pokemonSearch}
