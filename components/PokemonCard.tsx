@@ -14,21 +14,18 @@ const PokemonCard = ({
 }) => {
   const imageSrc = getPokemonImage(id)
   return (
-    <Link href={`/pokemon/${id}`}>
-      <a className='card md:p-6 text-left'>
-        <Blur bgColor={type} />
-        <h3 className='mb-3 text-2xl text-slate-900 font-bold hover:text-blue-600 focus:text-blue-600 capitalize'>
-          {name} &rarr;
-        </h3>
+    <Link href={`/pokemon/${id}`} className='card md:p-6 text-left'>
+      <Blur bgColor={type} />
+      <h3 className='mb-3 text-2xl text-slate-900 font-bold hover:text-blue-600 focus:text-blue-600 capitalize'>
+        {name} &rarr;
+      </h3>
 
-        <Image
-          src={imageSrc}
-          layout='intrinsic'
-          width={512}
-          height={512}
-          alt={`Image of ${name}`}
-        />
-      </a>
+      <Image
+        src={imageSrc}
+        width={512}
+        height={512}
+        alt={`Image of ${name}`}
+      />
     </Link>
   )
 }

@@ -5,9 +5,7 @@ function Header() {
     <header className='w-full h-16 shadow-md relative z-10'>
       <div className='px-4 flex justify-between items-center h-full bg-white'>
         <h2 className='text-2xl font-medium'>
-          <Link href={'/'}>
-            <a>Poke Hunt</a>
-          </Link>
+          <Link href={'/'}>Poke Hunt</Link>
         </h2>
       </div>
     </header>

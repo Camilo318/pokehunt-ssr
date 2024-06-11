@@ -1,5 +1,6 @@
 import type {
   ComboBoxProps,
+  ListBoxProps,
   ValidationResult
 } from 'react-aria-components'
 import {
@@ -20,6 +21,7 @@ interface MyComboBoxProps<T extends object>
   placeholder?: string
   errorMessage?: string | ((validation: ValidationResult) => string)
   children: React.ReactNode | ((item: T) => React.ReactNode)
+  renderEmptyState?: ListBoxProps<T>['renderEmptyState']
 }
 
 export function MyComboBox<T extends object>({
@@ -28,10 +30,11 @@ export function MyComboBox<T extends object>({
   errorMessage,
   placeholder,
   children,
+  renderEmptyState,
   ...props
 }: MyComboBoxProps<T>) {
   return (
-    <ComboBox {...props} menuTrigger='focus'>
+    <ComboBox {...props}>
       <Label>{label}</Label>
       <div className='my-combobox-container relative w-full'>
         <div className='flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none'>
@@ -61,8 +64,16 @@ export function MyComboBox<T extends object>({
       {description && <Text slot='description'>{description}</Text>}
       <FieldError>{errorMessage}</FieldError>
 
-      <Popover className='w-[var(--trigger-width)]'>
-        <MyListBox aria-label='search resutls'>{children}</MyListBox>
+      <Popover
+        className={cn(
+          'w-[var(--trigger-width)]',
+          !props.items && 'hidden'
+        )}>
+        <MyListBox
+          aria-label='search resutls'
+          renderEmptyState={renderEmptyState}>
+          {children}
+        </MyListBox>
       </Popover>
     </ComboBox>
   )
